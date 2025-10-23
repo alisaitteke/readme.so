@@ -1,7 +1,62 @@
 import Head from 'next/head'
+import { useEffect, useState } from 'react'
 import ViewPage from '../../components/ViewPage'
 
-export default function ReadmeView({ data, id, error }) {
+export default function ReadmeView({ id }) {
+  const [data, setData] = useState(null)
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/api/read/${id}`)
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError('README not found')
+          } else {
+            setError('Failed to load README')
+          }
+          setLoading(false)
+          return
+        }
+
+        const result = await response.json()
+        setData(result.data)
+        setLoading(false)
+      } catch (err) {
+        console.error('Error fetching README:', err)
+        setError('Failed to load README')
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [id])
+
+  if (loading) {
+    return (
+      <>
+        <Head>
+          <title>Loading... - readme.so</title>
+          <meta name="description" content="Loading README..." />
+          <link rel="preconnect" href="https://fonts.gstatic.com" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Mali&display=swap"
+            rel="stylesheet"
+          />
+        </Head>
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+          </div>
+        </div>
+      </>
+    )
+  }
+
   return (
     <>
       <Head>
@@ -15,96 +70,7 @@ export default function ReadmeView({ data, id, error }) {
         <link href="https://fonts.googleapis.com/css2?family=Mali&display=swap" rel="stylesheet" />
       </Head>
 
-      <ViewPage data={data} id={id} />
+      <ViewPage data={data} id={id} error={error} />
     </>
   )
-}
-
-export async function getServerSideProps({ params }) {
-  const { id } = params
-
-  try {
-    // Get KV namespace ID from environment
-    const kvNamespaceId = process.env.KV_NAMESPACE_ID || process.env.README_STORE_ID
-
-    if (!kvNamespaceId) {
-      console.error('KV Namespace ID not found in environment variables')
-      return {
-        props: {
-          data: null,
-          id,
-          error: 'Configuration error',
-        },
-      }
-    }
-
-    // Fetch from Cloudflare KV using REST API
-    const kvResponse = await fetch(
-      `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${kvNamespaceId}/values/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
-        },
-      }
-    )
-
-    if (!kvResponse.ok) {
-      if (kvResponse.status === 404) {
-        return {
-          props: {
-            data: null,
-            id,
-            error: 'README not found',
-          },
-        }
-      }
-
-      const errorText = await kvResponse.text()
-      console.error('KV API error:', errorText)
-      return {
-        props: {
-          data: null,
-          id,
-          error: 'Failed to load README',
-        },
-      }
-    }
-
-    const data = await kvResponse.json()
-
-    // Increment view count (optional)
-    if (data && typeof data.views === 'number') {
-      data.views = data.views + 1
-      // Update view count in KV (async, don't wait for it)
-      fetch(
-        `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/storage/kv/namespaces/${kvNamespaceId}/values/${id}`,
-        {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        }
-      ).catch((err) => console.error('Failed to update view count:', err))
-    }
-
-    return {
-      props: {
-        data,
-        id,
-        error: null,
-      },
-    }
-  } catch (error) {
-    console.error('Error fetching README:', error)
-
-    return {
-      props: {
-        data: null,
-        id,
-        error: 'Failed to load README',
-      },
-    }
-  }
 }
