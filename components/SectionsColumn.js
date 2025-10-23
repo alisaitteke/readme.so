@@ -203,7 +203,7 @@ export const SectionsColumn = ({
             onClick={resetSelectedSections}
           >
             <span className="pl-2 float-right">{t('section-column-click-reset')}</span>
-            <Image
+            <img
               className="w-auto h-5 inline-block"
               src={darkMode ? '/reset-light.svg' : '/reset.svg'}
               alt="Delete"
