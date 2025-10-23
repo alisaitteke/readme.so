@@ -1,0 +1,14 @@
+name = "readme-so"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "readme-so"
+
+[env.preview]
+name = "readme-so-preview"
+
+# KV Namespace binding
+[[kv_namespaces]]
+binding = "README_STORE"
+id = "1d51a9b952354e19baebc01755aec0b0"
+preview_id = "416527215222407a8adce37935f501b2"

@@ -38,4 +38,8 @@ public/workbox-*.js
 public/sw.js
 public/*.map
 
+# Cloudflare
+.dev.vars
+.wrangler/
+
 yarn.lock
