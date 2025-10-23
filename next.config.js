@@ -1,7 +1,8 @@
 const { i18n } = require('./next-i18next.config')
 
 const nextConfig = {
-  i18n,
+  // i18n'i sadece development'da aktif et, production'da static export için devre dışı bırak
+  ...(process.env.NODE_ENV !== 'production' && { i18n }),
   output: 'export',
   trailingSlash: true,
   images: {
@@ -18,16 +19,12 @@ const nextConfig = {
 
 // PWA'yı sadece production'da aktif et
 if (process.env.NODE_ENV === 'production') {
-  const withPWA = require('next-pwa')
-  const pwaConfig = {
+  const withPWA = require('next-pwa')({
     dest: 'public',
     disable: false,
-  }
-
-  module.exports = withPWA({
-    ...nextConfig,
-    pwa: pwaConfig,
   })
+
+  module.exports = withPWA(nextConfig)
 } else {
   module.exports = nextConfig
 }
