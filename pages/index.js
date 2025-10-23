@@ -105,6 +105,17 @@ export const getStaticProps = async ({ locale }) => {
   const sectionTemplates = allSectionTemplates[locale]
     ? allSectionTemplates[locale]
     : allSectionTemplates['en']
+
+  // Production'da i18n'i devre dışı bırak
+  if (process.env.NODE_ENV === 'production') {
+    return {
+      props: {
+        sectionTemplates,
+      },
+    }
+  }
+
+  // Development'da i18n'i aktif et
   const i18n = await serverSideTranslations(locale, ['editor'])
   return {
     props: {
