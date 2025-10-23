@@ -96,7 +96,7 @@ To run the dev server, run `npm run dev` and navigate to `localhost:3000`
 3. **Create `.dev.vars` file:**
 
    ```
-   KV_NAMESPACE_ID=1d51a9b952354e19baebc01755aec0b0
+   KV_NAMESPACE_ID=dbc88d119c6a41f1a6807021a4fff14e
    CLOUDFLARE_ACCOUNT_ID=your-account-id-here
    CLOUDFLARE_API_TOKEN=your-api-token-here
    ```

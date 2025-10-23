@@ -10,5 +10,5 @@ name = "readme-so-preview"
 # KV Namespace binding
 [[kv_namespaces]]
 binding = "README_STORE"
-id = "1d51a9b952354e19baebc01755aec0b0"
-preview_id = "416527215222407a8adce37935f501b2"
+id = "dbc88d119c6a41f1a6807021a4fff14e"
+preview_id = "9456b38ef9f248e88609c3bb8edb85f7"
