@@ -19,15 +19,12 @@ const nextConfig = {
 
 // PWA'yı sadece production'da aktif et
 if (process.env.NODE_ENV === 'production') {
-  const withPWA = require('next-pwa')
-
-  module.exports = withPWA({
-    ...nextConfig,
-    pwa: {
-      dest: 'public',
-      disable: false,
-    },
+  const withPWA = require('next-pwa')({
+    dest: 'public',
+    disable: false,
   })
+
+  module.exports = withPWA(nextConfig)
 } else {
   module.exports = nextConfig
 }
